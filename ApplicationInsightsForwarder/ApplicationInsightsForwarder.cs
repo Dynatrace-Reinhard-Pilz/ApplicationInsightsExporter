@@ -54,15 +54,15 @@ namespace ApplicationInsightsForwarder
 
                     log.LogInformation("[ForwardAI] [Run] [" + i + "] await _client.PostAsync(" + _otlpEndpoint + ")");
                     var res = await _client.PostAsync(_otlpEndpoint, content);
-                    log.LogInformation("[ForwardAI] [Run] [\" + i + \"]  /await _client.PostAsync(" + _otlpEndpoint + ")");
+                    log.LogInformation("[ForwardAI] [Run] [" + i + "]  /await _client.PostAsync(" + _otlpEndpoint + ")");
                     if (!res.IsSuccessStatusCode)
                     {
                         log.LogError("Couldn't send span " + (res.StatusCode) + "\n" + messageBody );
                     }
 
-                    log.LogInformation("[ForwardAI] [Run] [\" + i + \"]  await Task.Yield()");
+                    log.LogInformation("[ForwardAI] [Run] [" + i + "]  await Task.Yield()");
                     await Task.Yield();
-                    log.LogInformation("[ForwardAI] [Run] [\" + i + \"]  /await Task.Yield()");
+                    log.LogInformation("[ForwardAI] [Run] [" + i + "]  /await Task.Yield()");
                 }
                 catch (Exception e)
                 {
