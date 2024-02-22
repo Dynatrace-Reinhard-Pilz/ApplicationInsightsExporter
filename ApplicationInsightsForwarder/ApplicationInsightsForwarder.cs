@@ -35,7 +35,13 @@ namespace ApplicationInsightsForwarder
         [FunctionName("ForwardAI")]
         public async Task Run([EventHubTrigger("appinsights", Connection = "EHConnection")] EventData[] events, ILogger log)
         {
-            log.LogInformation("[ForwardAI] [Run] " + events.Length + " events");
+            if (events == null)
+            {
+                log.LogInformation("[ForwardAI] [Run] " + "null" + " events");
+            } else
+            {
+                log.LogInformation("[ForwardAI] [Run] " + events.Length + " events");
+            }            
             var exceptions = new List<Exception>();
             int i = -1;
 
@@ -66,6 +72,7 @@ namespace ApplicationInsightsForwarder
                 }
                 catch (Exception e)
                 {
+                    log.LogError(e.Message);
                     // We need to keep processing the rest of the batch - capture this exception and continue.
                     // Also, consider capturing details of the message that failed processing so it can be processed again later.
                     exceptions.Add(e);
