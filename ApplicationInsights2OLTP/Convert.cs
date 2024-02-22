@@ -14,6 +14,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using AISemConv = ApplicationInsights.SemanticConventions;
 using OTelSemConv = OpenTelemetry.SemanticConventions;
+using System.Linq;
 
 namespace ApplicationInsights2OTLP
 {
@@ -223,7 +224,7 @@ namespace ApplicationInsights2OTLP
         public ExportTraceServiceRequest FromApplicationInsights(string appInsightsJsonStr)
         {
 
-            _logger.LogDebug(appInsightsJsonStr);
+            _logger.LogDebug("[Convert] [FromApplicationInsights] " + appInsightsJsonStr);            
 
             var export = new ExportTraceServiceRequest();
 
@@ -232,7 +233,7 @@ namespace ApplicationInsights2OTLP
 
             var root = JsonDocument.Parse(appInsightsJsonStr);
 
-            var t = root.RootElement.GetProperty(TelemetryConstants.Records).EnumerateArray();
+            var t = root.RootElement.GetProperty(TelemetryConstants.Records).EnumerateArray();            
             while (t.MoveNext())
             {
                 var traceId = ParseTraceId(Value(t.Current, Attributes.OperationId));
@@ -348,7 +349,7 @@ namespace ApplicationInsights2OTLP
                 }
                 
             }
-
+            _logger.LogDebug("[Convert] [FromApplicationInsights] returns ");
             return export;
         }
     }

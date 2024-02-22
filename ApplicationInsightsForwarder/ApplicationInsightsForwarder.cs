@@ -35,10 +35,13 @@ namespace ApplicationInsightsForwarder
         [FunctionName("ForwardAI")]
         public async Task Run([EventHubTrigger("appinsights", Connection = "EHConnection")] EventData[] events, ILogger log)
         {
+            log.LogInformation("[ForwardAI] [Run] " + events.Length + " events");
             var exceptions = new List<Exception>();
+            int i = -1;
 
             foreach (EventData eventData in events)
             {
+                i++;
                 try
                 {
                     string messageBody = Encoding.UTF8.GetString(eventData.Body.Array, eventData.Body.Offset, eventData.Body.Count);
@@ -49,13 +52,17 @@ namespace ApplicationInsightsForwarder
 
                     var content = new ApplicationInsights2OTLP.ExportRequestContent(exportTraceServiceRequest);
 
+                    log.LogInformation("[ForwardAI] [Run] [" + i + "] await _client.PostAsync(" + _otlpEndpoint + ")");
                     var res = await _client.PostAsync(_otlpEndpoint, content);
+                    log.LogInformation("[ForwardAI] [Run] [\" + i + \"]  /await _client.PostAsync(" + _otlpEndpoint + ")");
                     if (!res.IsSuccessStatusCode)
                     {
                         log.LogError("Couldn't send span " + (res.StatusCode) + "\n" + messageBody );
                     }
 
+                    log.LogInformation("[ForwardAI] [Run] [\" + i + \"]  await Task.Yield()");
                     await Task.Yield();
+                    log.LogInformation("[ForwardAI] [Run] [\" + i + \"]  /await Task.Yield()");
                 }
                 catch (Exception e)
                 {
